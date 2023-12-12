@@ -5,7 +5,7 @@ Simple RSA asymmetric implemenation with python
 for run:
 
 ```
-pip install -r requirements.txt`
+pip install -r requirements.txt
 ```
 
 then:
