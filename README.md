@@ -1,6 +1,6 @@
 # RSA asymmetric algorithm
 
-Simple RSA asymmetric implemenation with python
+Simple RSA asymmetric signature implemenation with python
 
 for run:
 
