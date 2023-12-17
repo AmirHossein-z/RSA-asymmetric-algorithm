@@ -1,7 +1,8 @@
 import sympy
 
-# custom implementation for exponentiation of numbers
-def customPow(base, exponent, modulus = None):
+
+def custom_pow(base: int | float, exponent: int | float, modulus: int | float = None) -> int | float:
+    """ Custom implementation for exponentiation of numbers """
     if modulus is None:
         result = 1
         for _ in range(exponent):
@@ -23,57 +24,64 @@ def customPow(base, exponent, modulus = None):
         exponent //= 2
     return result
 
-def checkSignIsValid(sign, e, n, realMessage):
-    newMessage = customPow(sign, e, n)
-    print('newMessage', newMessage)
-    print('*********************************************')
-    return realMessage == newMessage
+def check_sign_is_valid(sign, e, n, real_message) -> bool:
+    new_message = custom_pow(sign, e, n)
+    print(f'New message: {new_message}')
+    print('*' * 60)
+    return real_message == new_message
 
-def generateE(phiN):
-    e = sympy.randprime(2, phiN)
-    while sympy.gcd(e, phiN) != 1:
-        e = sympy.randprime(2, phiN)
+def generate_e(phi_n) -> int | float:
+    e = sympy.randprime(2, phi_n)
+    while sympy.gcd(e, phi_n) != 1:
+        e = sympy.randprime(2, phi_n)
 
     return e
 
-def generateD(e,phiN):
-    d = sympy.mod_inverse(e, phiN)
-    while (e * d) % phiN != 1:
-        d = sympy.mod_inverse(e, phiN)
+def generate_d(e, phi_n) -> int | float:
+    d = sympy.mod_inverse(e, phi_n)
+    while (e * d) % phi_n != 1:
+        d = sympy.mod_inverse(e, phi_n)
     return d
 
-message = input('Enter your message (number & decimal format): ')
-MIN_PRIME_RANGE = input('Enter minimum prime range for produce prime number(default is: 1024): ')
-MAX_PRIME_RANGE = input('Enter maximum prime range for produce prime number(default is: 2048): ')
+def main() -> None:
+    try:
+        message = input('Enter your message (must be an integer)(enter q to quit the program): ')
 
-if message == '':
-    raise Exception("Sorry, no messages provided from you")
-else:
-    message = int(message)
+        if message.lower() == 'q':
+            exit()
+        else:
+            message: int = int(message)
+            
+        MIN_PRIME_RANGE = input('Enter minimum prime range for produce prime number(default is: 1024): ')
+        MAX_PRIME_RANGE = input('Enter maximum prime range for produce prime number(default is: 2048): ')
 
-if MIN_PRIME_RANGE == '':
-    MIN_PRIME_RANGE = 1024
-else:
-    MIN_PRIME_RANGE = int(MIN_PRIME_RANGE)
+        MIN_PRIME_RANGE: int | float = 1024 if MIN_PRIME_RANGE == '' else int(MIN_PRIME_RANGE)
+        MAX_PRIME_RANGE: int | float = 2048 if MAX_PRIME_RANGE == '' else int(MAX_PRIME_RANGE)
 
-if MAX_PRIME_RANGE == '': 
-    MAX_PRIME_RANGE = 2048
-else:
-    MAX_PRIME_RANGE = int(MAX_PRIME_RANGE)
+        # produce two random prime number
+        p = sympy.randprime(MIN_PRIME_RANGE, MAX_PRIME_RANGE)
+        q = sympy.randprime(MIN_PRIME_RANGE, MAX_PRIME_RANGE)
+        n = p * q
 
-# produce two random prime number
-p = sympy.randprime(MIN_PRIME_RANGE, MAX_PRIME_RANGE)
-q = sympy.randprime(MIN_PRIME_RANGE, MAX_PRIME_RANGE)
-n = p * q
+        # this formula for phi(N) only works for prime number
+        # for other numbers we should use another approach
+        phi_n = (p - 1) * (q - 1) 
 
-# this formula for phi(N) only works for prime number
-# for other numbers we should use another approach
-phiN = (p - 1) * (q - 1) 
+        e = generate_e(phi_n)
+        d = generate_d(e, phi_n)
+        sign = custom_pow(message, d, n)
 
-e = generateE(phiN)
-d = generateD(e,phiN)
-sign = customPow(message, d, n)
+        print(f'Message: {message}')
+        print('*' * 60)
+        print(f'Validation: {check_sign_is_valid(sign, e, n, message)}')
 
-print('message',message)
-print('*********************************************')
-print('valid',checkSignIsValid(sign,e,n,message))
+    except Exception as e:
+        print('An error accured, message:')
+        print(str(e))
+
+    print('Running again...')
+    main()
+
+
+if __name__ == '__main__':
+    main()
